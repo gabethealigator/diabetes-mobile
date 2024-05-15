@@ -1,0 +1,270 @@
+<ControlScreen>:
+    GridLayout:
+        pos_hint: {"center_x": 0.5, "center_y": 0.39}
+        padding: dp(10)
+        cols: 1
+        spacing: dp(15)
+
+        MDCard:
+            size_hint: None, None
+            width: root.width - dp(20)
+            height: root.height / 3.7 
+            orientation: "vertical"
+            on_release: app.change_screen("health", "foward")
+
+            BoxLayout:
+                orientation: "horizontal"
+
+                MDLabel:
+                    padding: dp(20)
+                    text: "Paciente"
+                    font_style: "H5"
+
+                AsyncImage:
+                    source: "assets/account.png"
+                    pos_hint: None, None
+                    pos_hint: {'right': 1}
+
+        MDCard:
+            size_hint: None, None
+            width: root.width - dp(20)
+            height: root.height / 3.7 
+            orientation: "vertical"
+            on_release: app.change_screen("medication", "forward")
+
+            BoxLayout:
+                orientation: "horizontal"
+
+                MDLabel:
+                    padding: dp(20)
+                    text: "Remédios"
+                    font_style: "H5"
+
+                AsyncImage:
+                    source: "assets/medication.png"
+                    pos_hint: None, None
+                    pos_hint: {'right': 1}
+
+        MDCard:
+            size_hint: None, None
+            width: root.width - dp(20)
+            height: root.height / 3.7 
+            orientation: "vertical"
+            on_release: app.change_screen("diabetes", "forward")
+
+            BoxLayout:
+                orientation: "horizontal"
+
+                MDLabel:
+                    padding: dp(20)
+                    text: "Diabetes"
+                    font_style: "H5"
+
+                AsyncImage:
+                    source: "assets/health.png"
+                    pos_hint: None, None
+                    pos_hint: {'right': 1}
+
+    MDTopAppBar:
+        title: "Controle de Diabetes"
+        pos_hint: {"top": 1}
+
+<HealthScreen>:
+    MDCard:
+        orientation: "vertical"
+        pos_hint: (None, None)
+        pos_hint: {"center_x": 0.5, "center_y": 0.45}
+        padding: 10
+        size_hint: (None, None)
+        size: dp(340), dp(560)
+        md_bg_color: (0, 0, 0, 0)
+
+        MDScrollView:
+            MDList:
+                spacing: 10
+                id: container
+
+    MDTopAppBar:
+        title: "Pacientes"
+        left_action_items: [["arrow-left", lambda x: app.change_screen("control", "backward"), "Voltar"]]
+        right_action_items: [["plus", lambda x: app.change_screen("addpaciente", "forward"), "Novo paciente"]]
+        pos_hint: {"top": 1}
+
+<AddPaciente>:
+    name: 'addpaciente'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(20)
+        spacing: dp(20)
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        size_hint: None, None
+        size: dp(340), dp(560)
+        md_bg_color: (0, 0, 0, 0)
+
+        MDTextField:
+            id: nome
+            mode: 'rectangle'
+            hint_text: 'Nome'
+            font_size: '18sp'
+
+        MDTextField:
+            id: idade
+            mode: 'rectangle'
+            hint_text: 'Idade'
+            font_size: '18sp'
+            input_filter: 'int'
+
+        MDTextField:
+            id: altura
+            mode: 'rectangle'
+            hint_text: 'Altura (cm)'
+            font_size: '18sp'
+            input_filter: 'int'
+
+        MDTextField:
+            id: peso
+            mode: 'rectangle'
+            hint_text: 'Peso (kg)'
+            font_size: '18sp'
+            input_filter: 'int'
+
+        MDTextField:
+            id: sexo
+            mode: 'rectangle'
+            hint_text: 'Sexo'
+            font_size: '18sp'
+
+        MDFillRoundFlatButton:
+            text: 'Adicionar'
+            font_size: '20sp'
+            size_hint_x: 1.0
+            width: '150dp'
+            pos_hint: {'center_x': 0.5}
+            on_release: app.adicionar_paciente(nome.text, idade.text, altura.text, peso.text, sexo.text)
+
+    MDTopAppBar:
+        title: "Adicionar paciente"
+        left_action_items: [["arrow-left", lambda x: app.change_screen("health", "backward"), "Voltar"]]
+        right_action_items: [["home", lambda x: app.change_screen("control", "backward"), "Inicio"]]
+        pos_hint: {"top": 1}
+
+<EditPaciente>:
+    name: 'editpaciente'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(20)
+        spacing: dp(25)
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        size_hint: None, None
+        size: dp(340), dp(560)
+        md_bg_color: (0, 0, 0, 0)
+
+        MDTextField:
+            id: nome
+            mode: 'rectangle'
+            hint_text: 'Nome'
+            font_size: '18sp'
+
+        MDTextField:
+            id: idade
+            mode: 'rectangle'
+            hint_text: 'Idade'
+            font_size: '18sp'
+            input_filter: 'int'
+
+        MDTextField:
+            id: altura
+            mode: 'rectangle'
+            hint_text: 'Altura (cm)'
+            font_size: '18sp'
+            input_filter: 'int'
+
+        MDTextField:
+            id: peso
+            mode: 'rectangle'
+            hint_text: 'Peso (kg)'
+            font_size: '18sp'
+            input_filter: 'int'
+
+        MDTextField:
+            id: sexo
+            mode: 'rectangle'
+            hint_text: 'Sexo'
+            font_size: '18sp'
+
+        MDFillRoundFlatButton:
+            text: 'Salvar'
+            font_size: '20sp'
+            size_hint_x: 1.0
+            width: '150dp'
+            pos_hint: {'center_x': 0.5}
+            on_release: root.editar_paciente()
+
+    MDTopAppBar:
+        title: "Editar Paciente"
+        left_action_items: [["arrow-left", lambda x: app.change_screen("health", "backward"), "Voltar"]]
+        right_action_items: [["home", lambda x: app.change_screen("control", "backward"), "Inicio"]]
+        pos_hint: {"top": 1}
+
+<DiabetesScreen>:
+
+    MDTopAppBar:
+        title: "Diabetes"
+        left_action_items: [["arrow-left", lambda x: app.change_screen("control"), "Voltar"]]
+        right_action_items: [["home", lambda x: app.change_screen("control"), "Inicio"]]
+        pos_hint: {"top": 1}
+
+<MedScreen>:
+    MDCard:
+        orientation: "vertical"
+        pos_hint: (None, None)
+        pos_hint: {"center_x": 0.5, "center_y": 0.43}
+        padding: 10
+        size_hint: (None, None)
+        size: dp(340), dp(480)
+        md_bg_color: (0, 0, 0, 0)
+
+        MDScrollView:
+            MDList:
+                spacing: 10
+                id: container
+
+    BoxLayout:
+        orientation: 'vertical'
+        pos_hint: {"center_x": 0.5, "center_y": 0.83}
+        width: root.width - dp(20)
+        height: dp(30)
+        size_hint: None, None
+        md_bg_color: (0, 0, 0, 0)
+
+        MDRoundFlatIconButton
+            id: patient_button
+            text: "Selecionar Paciente"
+            icon: "account"
+            font_size: "18sp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_release: root.open_patient_dialog()
+
+
+    BoxLayout:
+        orientation: 'vertical'
+        width: root.width
+        height: dp(30)
+        size_hint: None, None
+        padding: (10, 0, 10, 15)
+        md_bg_color: (0, 0, 0, 0)
+
+        MDFillRoundFlatButton:
+            text: 'Adicionar'
+            font_size: '20sp'
+            size_hint_x: 1.0
+            width: '150dp'
+            pos_hint: {'center_x': 0.5}
+            on_release: root.open_add_med_dialog()
+
+    MDTopAppBar:
+        id: top_bar_meds
+        title: "Medicamentos"
+        left_action_items: [["arrow-left", lambda x: app.change_screen("control"), "Voltar"]]
+        right_action_items: [["home", lambda x: app.change_screen("control"), "Inicio"]]
+        pos_hint: {"top": 1}
