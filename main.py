@@ -156,15 +156,18 @@ class CardPaciente(MDCard, EventDispatcher):
             )
             cursor = connection.cursor()
 
+            cursor.execute(f"DELETE FROM medicamento WHERE paciente_ID_PC = '{self.id_pc}'")
+            connection.commit()
+
             cursor.execute(f"DELETE FROM paciente WHERE id_pc = '{self.id_pc}'")
+            connection.commit()
 
             toast('Paciente deletado', duration=1) 
-
-            connection.commit()
 
             self.dispatch('on_delete_patient')
 
         except mysql.connector.Error as error:
+            print(error)
             toast("Falha ao deletar paciente", duration=1)
 
         finally:
@@ -380,7 +383,7 @@ class CardMed(MDCard, EventDispatcher):
             self.parent.remove_widget(self)
 
         except mysql.connector.Error as error:
-            toast("Failed to delete medication", duration=1)
+            toast("Falha ao deletar medicamento", duration=1)
 
         finally:
             if connection.is_connected():
