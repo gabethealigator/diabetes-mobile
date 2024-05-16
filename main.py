@@ -544,7 +544,7 @@ class Main(MDApp):
             self.sm.transition = SlideTransition(direction='right')
         self.sm.current = screen_name 
 
-    def adicionar_paciente(self, nome, idade, altura, peso, sexo):
+    def adicionar_paciente(self, id_pc, nome, idade, sexo, controle_dt):
         try:
             connection = mysql.connector.connect(
                 host=DB_HOST,
@@ -554,23 +554,20 @@ class Main(MDApp):
             )
             cursor = connection.cursor()
 
-            if nome == "" or idade == "" or altura == "" or peso == "" or sexo == "":
-                toast('Preencha todos os campos', duration=1)
-                return
-            else:
-                cursor.execute("""
-                    INSERT INTO paciente (NOME_PC, IDADE, PESO, ALTURA, SEXO) 
-                    VALUES (%s, %s, %s, %s, %s)
-                """, (nome, idade, peso, altura, sexo))
+            cursor.execute(f"INSERT INTO controle_dt (ID_DT) VALUES ('{controle_dt}')")
+            connection.commit()
 
-                toast('Paciente Adicionado!', duration=1) 
+            id_dt = cursor.lastrowid
 
-                self.change_screen("health", "backward")
+            cursor.execute(f"INSERT INTO paciente (id_pc, nome_pc, idade, sexo, controle_dt_ID_DT) VALUES ('{id_pc}', '{nome}', '{idade}', '{sexo}', '{id_dt}')")
+            connection.commit()
 
-                connection.commit()
+            toast('Paciente adicionado', duration=1) 
+            self.change_screen('health')  
 
         except mysql.connector.Error as error:
-            print("Falha ao inserir dados no mysql", error)
+            print(error)
+            toast("Falha ao adicionar paciente", duration=1)
 
         finally:
             if connection.is_connected():
