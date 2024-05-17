@@ -283,11 +283,20 @@ class DiabetesGraphCard(MDCard):
         self.df = treated_data
 
         if not self.df.empty:
-            plt.figure()
+            fig = plt.figure(facecolor='None')
+
+            plt.rcParams['text.color'] = 'white'
+            plt.rcParams['axes.labelcolor'] = 'white'
+            plt.rcParams['xtick.color'] = 'white'
+            plt.rcParams['ytick.color'] = 'white'
+            plt.rcParams['axes.edgecolor'] = 'white'
+
+            ax = fig.add_subplot(111)
+            ax.set_facecolor('None')
+
             plt.title('Glicose x Data')
             plt.xlabel('Data')
             plt.ylabel('Glicose')
-            plt.autoscale(tight=True)
 
             self.df.set_index('date')['glicose'].plot(
                 kind='bar', 
@@ -296,10 +305,11 @@ class DiabetesGraphCard(MDCard):
                 rot=45, 
                 fontsize=8, 
                 width=0.5, 
-                edgecolor='black', 
+                edgecolor='white',
                 linewidth=0.5,
+                ax=ax
             )
-            App.get_running_app().root.get_screen('diabetes').ids.container.add_widget(FigureCanvasKivyAgg(plt.gcf()))
+            App.get_running_app().root.get_screen('diabetes').ids.container.add_widget(FigureCanvasKivyAgg(fig))
 
 class DiabetesScreen(Screen):
     def open_patient_dialog(self):
