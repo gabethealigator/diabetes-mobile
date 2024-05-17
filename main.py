@@ -1,22 +1,23 @@
-from kivy.event import EventDispatcher  # type: ignore
-from kivy.metrics import dp  # type: ignore
-from kivy.uix.boxlayout import BoxLayout  # type: ignore
-from kivy.uix.gridlayout import GridLayout  # type: ignore
-from kivy.uix.scrollview import ScrollView  # type: ignore
-from kivy.uix.screenmanager import SlideTransition, ScreenManager, Screen  # type: ignore
-
-import mysql.connector  # type: ignore
-from kivymd.app import MDApp  # type: ignore
-from kivymd.toast import toast  # type: ignore
-from kivymd.uix.button import MDIconButton, MDRoundFlatButton# type: ignore
-from kivymd.uix.card import MDCard  # type: ignore
-from kivymd.uix.label import MDLabel  # type: ignore
-from kivymd.uix.dialog import MDDialog
-from kivymd.uix.list import TwoLineListItem, MDList
-from kivymd.uix.textfield import MDTextField  # type: ignore
-from kivy.core.window import Window # type: ignore
-import pandas as pd
 import matplotlib.pyplot as plt
+import mysql.connector
+from kivy.app import App
+import pandas as pd
+from kivy.core.window import Window
+from kivy_garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
+from kivy.event import EventDispatcher
+from kivy.metrics import dp
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.screenmanager import Screen, ScreenManager, SlideTransition
+from kivy.uix.scrollview import ScrollView
+from kivymd.app import MDApp
+from kivymd.toast import toast
+from kivymd.uix.button import MDIconButton, MDRoundFlatButton
+from kivymd.uix.card import MDCard
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.label import MDLabel
+from kivymd.uix.list import MDList, TwoLineListItem
+from kivymd.uix.textfield import MDTextField
 
 Window.size = (338, 630)
 
@@ -276,13 +277,6 @@ class EditPaciente(Screen):
 class DiabetesGraphCard(MDCard):
     def __init__(self, treated_data, **kwargs):
         super().__init__(**kwargs)
-        self.orientation = "horizontal"
-        self.spacing = "8dp"
-        self.size_hint_y = None
-        self.padding = [20]
-        self.height = "435dp"
-        self.md_bg_color = (51, 53, 53, 0.07)
-
         if isinstance(treated_data, list):
             treated_data = pd.DataFrame(treated_data, columns=['date', 'glicose'])
 
@@ -290,8 +284,22 @@ class DiabetesGraphCard(MDCard):
 
         if not self.df.empty:
             plt.figure()
-            self.df.set_index('date')['glicose'].plot(kind='bar', color='red')
-            plt.show()
+            plt.title('Glicose x Data')
+            plt.xlabel('Data')
+            plt.ylabel('Glicose')
+            plt.autoscale(tight=True)
+
+            self.df.set_index('date')['glicose'].plot(
+                kind='bar', 
+                color='red', 
+                figsize=(10, 5), 
+                rot=45, 
+                fontsize=8, 
+                width=0.5, 
+                edgecolor='black', 
+                linewidth=0.5,
+            )
+            App.get_running_app().root.get_screen('diabetes').ids.container.add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
 class DiabetesScreen(Screen):
     def open_patient_dialog(self):
@@ -359,9 +367,7 @@ class DiabetesScreen(Screen):
             data['date'] = pd.to_datetime(data['date'])
 
         treated_data = [(item[1].strftime('%m-%d'), item[0]) for item in data.itertuples(index=False, name=None) if item[0] is not None and item[1] is not None]
-
         card = DiabetesGraphCard(treated_data)
-        self.ids.container.add_widget(card)
 
 class CardMed(MDCard, EventDispatcher):
     def __init__(self, dados, **kwargs):
