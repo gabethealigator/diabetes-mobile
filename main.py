@@ -292,7 +292,41 @@ class DiabetesGraphCard(MDCard):
         self.add_widget(graph)
 
 class DiabetesScreen(Screen):
-    def on_enter(self):
+    def open_patient_dialog(self):
+        self.dialog = MDDialog(
+            title="Selecione um paciente",
+            type="custom",
+            content_cls=MDList(),
+            buttons=[
+                MDRoundFlatButton(
+                    text="CANCELAR",
+                    on_release=self.close_patient_dialog,
+                )
+            ],
+        )
+
+        for id_pc, nome_pc in DatabaseManager.get_all_patients():
+            list_item = TwoLineListItem(
+                text=nome_pc,
+                secondary_text=f"ID: {id_pc}",
+                on_release=self.on_patient_select
+            )
+            list_item.id_pc = id_pc
+            self.dialog.content_cls.add_widget(list_item)
+
+        self.dialog.open()
+
+    def close_patient_dialog(self, *args):
+        if self.dialog:
+            self.dialog.dismiss()
+
+    def on_patient_select(self, instance):
+        self.ids.top_bar_diabetes.title = instance.text
+        self.selected_patient_id = instance.id_pc
+        self.create_card()
+        self.dialog.dismiss()
+
+    def create_card(self):
         self.ids.container.clear_widgets()
 
         card = DiabetesGraphCard()
