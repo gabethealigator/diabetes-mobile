@@ -207,6 +207,48 @@
         pos_hint: {"top": 1}
 
 <DiabetesScreen>:
+    BoxLayout:
+        id: container
+        orientation: 'vertical'
+        pos_hint: {"center_x": 0.5, "center_y": 0.6}
+        width: root.width - dp(20)
+        height: root.height
+        size_hint: None, None
+        md_bg_color: (0, 0, 0, 0)
+
+    BoxLayout:
+        orientation: 'vertical'
+        pos_hint: {"center_x": 0.5, "center_y": 0.83}
+        width: root.width - dp(20)
+        height: dp(30)
+        size_hint: None, None
+        md_bg_color: (0, 0, 0, 0)
+
+        MDRoundFlatIconButton
+            id: patient_button
+            text: "Selecionar Paciente"
+            icon: "account"
+            font_size: "18sp"
+            width: root.width - dp(20)
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_release: root.open_patient_dialog()
+
+    BoxLayout:
+        orientation: 'vertical'
+        width: root.width
+        height: dp(30)
+        size_hint: None, None
+        padding: (10, 0, 10, 15)
+        md_bg_color: (0, 0, 0, 0)
+
+        MDFillRoundFlatButton:
+            text: 'Adicionar'
+            font_size: '20sp'
+            size_hint_x: 1.0
+            width: '150dp'
+            width: root.width - dp(20)
+            pos_hint: {'center_x': 0.5}
+            on_release: root.open_add_med_dialog()
 
     MDTopAppBar:
         title: "Diabetes"
@@ -242,6 +284,7 @@
             text: "Selecionar Paciente"
             icon: "account"
             font_size: "18sp"
+            width: root.width - dp(20)
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             on_release: root.open_patient_dialog()
 
@@ -260,6 +303,7 @@
             size_hint_x: 1.0
             width: '150dp'
             pos_hint: {'center_x': 0.5}
+            width: root.width - dp(20)
             on_release: root.open_add_med_dialog()
 
     MDTopAppBar:

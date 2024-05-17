@@ -15,6 +15,7 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.list import TwoLineListItem, MDList
 from kivymd.uix.textfield import MDTextField  # type: ignore
 from kivy.core.window import Window # type: ignore
+from kivy.garden.graph import Graph, MeshLinePlot # type: ignore
 
 Window.size = (338, 630)
 
@@ -268,8 +269,34 @@ class EditPaciente(Screen):
                 cursor.close()
                 connection.close()
 
+class DiabetesGraphCard(MDCard):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.orientation = "horizontal"
+        self.spacing = "8dp"
+        self.size_hint_y = None
+        self.padding = [20]
+        self.height = "435dp"
+        self.md_bg_color = (51, 53, 53, 0.07)
+
+        graph = Graph(xlabel='Data', ylabel='Nivel de glicose', x_ticks_minor=5,
+                      x_ticks_major=0, y_ticks_major=5,
+                      y_grid_label=True, x_grid_label=True, padding=5,
+                      x_grid=True, y_grid=True, xmin=0, xmax=100, ymin=0, ymax=100)
+
+        plot = MeshLinePlot(color=[1, 0, 0, 1])
+        plot.points = [(0, 30), (1, 40), (2, 50), (3, 60), (4, 70), (5, 80), (6, 90), (7, 100)]
+
+        graph.add_plot(plot)
+
+        self.add_widget(graph)
+
 class DiabetesScreen(Screen):
-    pass
+    def on_enter(self):
+        self.ids.container.clear_widgets()
+
+        card = DiabetesGraphCard()
+        self.ids.container.add_widget(card)
 
 class CardMed(MDCard, EventDispatcher):
     def __init__(self, dados, **kwargs):
