@@ -1,4 +1,3 @@
-from kivy.core.window import Window  # type: ignore
 from kivy.event import EventDispatcher  # type: ignore
 from kivy.metrics import dp  # type: ignore
 from kivy.uix.boxlayout import BoxLayout  # type: ignore
@@ -12,9 +11,10 @@ from kivymd.toast import toast  # type: ignore
 from kivymd.uix.button import MDIconButton, MDRoundFlatButton# type: ignore
 from kivymd.uix.card import MDCard  # type: ignore
 from kivymd.uix.label import MDLabel  # type: ignore
-from kivymd.uix.dialog import MDDialog # type: ignore
-from kivymd.uix.list import TwoLineListItem, MDList # type: ignore
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.list import TwoLineListItem, MDList
 from kivymd.uix.textfield import MDTextField  # type: ignore
+from kivy.core.window import Window # type: ignore
 
 Window.size = (338, 630)
 
@@ -24,7 +24,6 @@ DB_PASSWORD = ''
 DB_NAME = 'diabetes'
 
 class DatabaseManager:
-    @staticmethod
     def execute_sql_file(filename, connection):
         try:
             with open(filename, 'r') as file:
@@ -38,24 +37,29 @@ class DatabaseManager:
 
                 connection.commit()
 
-                print("SQL file executed successfully.")
+                print("Arquivo SQL executado com sucesso")
 
         except mysql.connector.Error as error:
-            print("Failed to execute SQL file:", error)
+            print("Falha ao ler o arquivo SQL", error)
 
     try:
         connection = mysql.connector.connect(
             host=DB_HOST,
             user=DB_USER,
             password=DB_PASSWORD,
-            database=DB_NAME
         )
 
         execute_sql_file('diabetes.sql', connection)
 
+        print("Conectado ao banco de dados MYSQL")
+
+    except mysql.connector.Error as error:
+        print("Falha ao se conectar ao MYSQL", error)
+
     finally:
-        if connection.is_connected():
+        if 'connection' in locals() and connection.is_connected():
             connection.close()
+            print("Conexão MYSQL fechada")
 
     @staticmethod
     def get_data_from_database():
