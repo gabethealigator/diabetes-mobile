@@ -15,7 +15,8 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.list import TwoLineListItem, MDList
 from kivymd.uix.textfield import MDTextField  # type: ignore
 from kivy.core.window import Window # type: ignore
-from kivy.garden.graph import Graph, MeshLinePlot # type: ignore
+import pandas as pd
+import matplotlib.pyplot as plt
 
 Window.size = (338, 630)
 
@@ -273,7 +274,7 @@ class EditPaciente(Screen):
                 connection.close()
 
 class DiabetesGraphCard(MDCard):
-    def __init__(self, **kwargs):
+    def __init__(self, treated_data, **kwargs):
         super().__init__(**kwargs)
         self.orientation = "horizontal"
         self.spacing = "8dp"
@@ -282,17 +283,15 @@ class DiabetesGraphCard(MDCard):
         self.height = "435dp"
         self.md_bg_color = (51, 53, 53, 0.07)
 
-        graph = Graph(xlabel='Data', ylabel='Nivel de glicose', x_ticks_minor=5,
-                      x_ticks_major=0, y_ticks_major=5,
-                      y_grid_label=True, x_grid_label=True, padding=5,
-                      x_grid=True, y_grid=True, xmin=0, xmax=100, ymin=0, ymax=100)
+        if isinstance(treated_data, list):
+            treated_data = pd.DataFrame(treated_data, columns=['date', 'glicose'])
 
-        plot = MeshLinePlot(color=[1, 0, 0, 1])
-        plot.points = [(0, 30), (1, 40), (2, 50), (3, 60), (4, 70), (5, 80), (6, 90), (7, 100)]
+        self.df = treated_data
 
-        graph.add_plot(plot)
-
-        self.add_widget(graph)
+        if not self.df.empty:
+            plt.figure()
+            self.df.set_index('date')['glicose'].plot(kind='bar', color='red')
+            plt.show()
 
 class DiabetesScreen(Screen):
     def open_patient_dialog(self):
@@ -329,10 +328,39 @@ class DiabetesScreen(Screen):
         self.create_card()
         self.dialog.dismiss()
 
+    def get_data_for_plot(self):
+        connection = mysql.connector.connect(
+            host=DB_HOST,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            database=DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT glicose, date FROM controle_dt WHERE paciente_id_pc = {self.selected_patient_id}")
+        data = cursor.fetchall()
+        connection.close()
+
+        if data:
+            df = pd.DataFrame(data, columns=['glicose', 'date'])
+        else:
+            df = pd.DataFrame(columns=['glicose', 'date'])
+
+        if not df.empty:
+            df['date'] = pd.to_datetime(df['date'])
+
+        return df
+
     def create_card(self):
         self.ids.container.clear_widgets()
+        data = self.get_data_for_plot()
 
-        card = DiabetesGraphCard()
+        if not data.empty:
+            data['date'] = pd.to_datetime(data['date'])
+
+        treated_data = [(item[1].strftime('%m-%d'), item[0]) for item in data.itertuples(index=False, name=None) if item[0] is not None and item[1] is not None]
+
+        card = DiabetesGraphCard(treated_data)
         self.ids.container.add_widget(card)
 
 class CardMed(MDCard, EventDispatcher):

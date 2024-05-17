@@ -7,16 +7,16 @@ CREATE TABLE controle_dt (
   GORD_FIG float NOT NULL,
   CPA float NOT NULL,
   RED_PESO float NOT NULL,
-  ID_PC varchar(45) NOT NULL,
+  paciente_ID_PC varchar(45) NOT NULL,
   Date datetime DEFAULT NULL,
   PRIMARY KEY (ID_DT)
 );
 
-INSERT INTO controle_dt (ID_DT, GLICOSE, GORD_FIG, CPA, RED_PESO, ID_PC, Date) VALUES
-(1, 213, 0, 0, 0, '1', '2023-09-20 17:21:23'),
-(2, 123, 0, 0, 0, '1', '2023-10-20 17:09:34'),
-(3, 123, 0, 0, 0, '2', '2023-12-20 08:22:19'),
-(4, 123, 0, 0, 0, '2', '2023-03-20 05:22:22');
+INSERT INTO controle_dt (ID_DT, GLICOSE, GORD_FIG, CPA, RED_PESO, paciente_ID_PC, Date) VALUES
+(1, 213, 0, 0, 0, '1', '2023-09-20'),
+(2, 200, 0, 0, 0, '1', '2023-10-20'),
+(3, 340, 0, 0, 0, '2', '2023-12-20'),
+(4, 120, 0, 0, 0, '2', '2023-03-20');
 
 CREATE TABLE paciente (
   ID_PC int(11) NOT NULL AUTO_INCREMENT,
