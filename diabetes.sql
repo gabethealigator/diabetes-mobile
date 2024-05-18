@@ -21,6 +21,7 @@ INSERT INTO controle_dt (ID_DT, GLICOSE, GORD_FIG, CPA, RED_PESO, paciente_ID_PC
 (6, 101, 0, 0, 0, '2', '2023-04-30'),
 (7, 340, 0, 0, 0, '2', '2023-02-20'),
 (8, 120, 0, 0, 0, '2', '2023-03-10');
+(8, 90, 0, 0, 0, '4', '2023-03-10');
 
 CREATE TABLE paciente (
   ID_PC int(11) NOT NULL AUTO_INCREMENT,
