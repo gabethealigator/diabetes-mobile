@@ -8,7 +8,7 @@ CREATE TABLE controle_dt (
   CPA float NOT NULL,
   RED_PESO float NOT NULL,
   paciente_ID_PC varchar(45) NOT NULL,
-  Date datetime DEFAULT NULL,
+  Date datetime DEFAULT NOW(),
   PRIMARY KEY (ID_DT)
 );
 

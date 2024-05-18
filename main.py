@@ -346,6 +346,72 @@ class DiabetesScreen(Screen):
         self.create_card()
         self.dialog.dismiss()
 
+    def open_add_glicose_dialog(self):
+        if not hasattr(self, 'selected_patient_id'):
+            toast("Selecione um paciente", duration=1)
+            return
+
+        self.dialog = MDDialog(
+            title="Adicionar Glicose",
+            type="custom",
+            content_cls=MDList(),
+            buttons=[
+                MDRoundFlatButton(
+                    text="CANCELAR",
+                    on_release=self.close_add_glicose_dialog,
+                ),
+                MDRoundFlatButton(
+                    text="ADICIONAR",
+                    on_release=self.add_glicose,
+                )
+            ],
+        )
+
+        self.glicose = MDTextField(hint_text="Glicose", font_size=14)
+
+        self.dialog.content_cls.add_widget(self.glicose)
+
+        self.dialog.open()
+    
+    def close_add_glicose_dialog(self, *args):
+        if self.dialog:
+            self.dialog.dismiss()
+
+    def add_glicose(self, *args):
+        try:
+            connection = mysql.connector.connect(
+                host=DB_HOST,
+                user=DB_USER,
+                password=DB_PASSWORD,
+                database=DB_NAME
+            )
+            cursor = connection.cursor()
+
+            if self.glicose.text == "":
+                toast('Preencha todos os campos', duration=1)
+                return
+            else:
+                cursor.execute(f"""
+                    INSERT INTO controle_dt (glicose, paciente_id_pc) 
+                    VALUES ('{self.glicose.text}', '{self.selected_patient_id}')
+                """)
+
+                toast('Glicose Adicionada!', duration=1) 
+
+                self.dialog.dismiss()
+
+                self.create_card()
+
+                connection.commit()
+
+        except mysql.connector.Error as error:
+            print("Falha ao inserir dados no mysql", error)
+
+        finally:
+            if connection.is_connected():
+                cursor.close()
+                connection.close()
+
     def get_data_for_plot(self):
         connection = mysql.connector.connect(
             host=DB_HOST,
